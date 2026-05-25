@@ -5,14 +5,14 @@ on:
     # Executa automaticamente todos os dias às 00:00 UTC (21:00 BRT)
     - cron: '0 0 * * *'
   workflow_dispatch:
-    # Permite que você clique em um botão no GitHub para rodar manualmente a qualquer momento
+    # Permite rodar manualmente clicando no botão no GitHub
 
 jobs:
   build-and-run:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write # Dá permissão para o bot salvar os arquivos m3u8 e xml no seu repositório
+      contents: write # Permissão para o bot atualizar os arquivos e o README
 
     steps:
     - name: Baixar código do repositório
@@ -21,7 +21,7 @@ jobs:
     - name: Configurar o Python ambiente
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11' # Versão estável ideal para servidores Linux
+        python-version: '3.11'
 
     - name: Instalar dependências de rede
       run: |
@@ -31,23 +31,24 @@ jobs:
     - name: Executar o Raspador TCL
       run: python tcl_scraper.py
 
-    - name: Injetar Hora no Badge
+    - name: Injetar Data e Hora no Badge do README
       run: |
-        # Captura a hora atual no fuso horário de Brasília (-3)
-        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d/%m/%Y--%H:%M")
-        # Substitui o link do badge no README pelo link contendo a hora real
-        sed -i -E "s|badge/Atualizado-[^?]+|badge/Atualizado-$BRAZIL_TIME|g" README.md
+        # Define o fuso horário para o de Brasília e formata (Ex: 24/05/2026--21:00)
+        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d\/%m\/%Y--%H:%M")
         
+        # Substitui a secção do badge dinâmico no README.md utilizando sed
+        sed -i -E "s|badge/Atualizado-[^?]+|badge/Atualizado-$BRAZIL_TIME|g" README.md
+
     - name: Salvar e Commitar alterações no repositório
       run: |
         git config --global user.name "github-actions[bot]"
-        git config --global user.name "github-actions[bot]@users.noreply.github.com"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        # Verifica se houve mudanças para evitar commits vazios que geram erro
-        git add tcl.m3u8 tcl_epg.xml
+        git add tcl.m3u8 tcl_epg.xml README.md
         if git diff --staged --quiet; then
-          echo "Nenhuma mudança encontrada nos arquivos gerados."
+          echo "Nenhuma alteração detetada."
         else
-          git commit -m "Atualização automática: Lista e EPG atualizados ✅"
+          git commit -m "Atualização automática: Lista e EPG Atualizado ✅"
           git push
         fi
+        
