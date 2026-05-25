@@ -1,10 +1,11 @@
 # 📺 EPG-TCL-Channel
 
 <p align="center">
-  <img src="https://img.shields.io/github/actions/workflow/status/JulioCesarXY/EPG-TCL-Channel/tcl_update.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=Automa%C3%A7%C3%A3o" alt="GitHub Actions Status">
-  <img src="https://img.shields.io/github/last-commit/JulioCesarXY/EPG-TCL-Channel?style=for-the-badge&color=blue&label=Última%20Atualização" alt="Last Commit">
-  <img src="https://img.shields.io/github/license/JulioCesarXY/EPG-TCL-Channel?style=for-the-badge&color=lightgrey&label=Licença" alt="License">
+  <img src="https://img.shields.io/github/actions/workflow/status/JulioCesarXY/EPG-TCL-Channel/tcl_update.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=Automacao" alt="GitHub Actions Status">
+  <img src="https://img.shields.io/badge/Atualizado-%20-blue?style=for-the-badge&label=LOG" alt="Last Update" id="tcl-timestamp">
+  <img src="https://img.shields.io/github/license/JulioCesarXY/EPG-TCL-Channel?style=for-the-badge&color=lightgrey&label=Licenca" alt="License">
 </p>
+
 
 O **EPG-TCL-Channel** é um gerador automatizado de playlists IPTV (`.m3u8`) e guias de programação (`.xml` no padrão XMLTV) focado na infraestrutura oficial de canais FAST da **TCL TV Plus / Ideonow**. 
 
