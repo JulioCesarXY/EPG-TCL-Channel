@@ -33,11 +33,12 @@ jobs:
 
     - name: Injetar Data e Hora no Badge do README
       run: |
-        # Define o fuso horário para o de Brasília e formata (Ex: 24/05/2026--21:00)
-        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d\/%m\/%Y--%H:%M")
+        # Captura o horário de Brasília formatado (Ex: 24-05-2026_21-50)
+        # Substituímos as barras por hifens para não quebrar o comando sed e a URL do badge
+        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d-%m-%Y_%H:%M")
         
-        # Substitui a secção do badge dinâmico no README.md utilizando sed
-        sed -i -E "s|badge/Atualizado-[^?]+|badge/Atualizado-$BRAZIL_TIME|g" README.md
+        # Substitui o marcador estático pela hora real da execução
+        sed -i "s/HORARIO_COMPILACAO/$BRAZIL_TIME/g" README.md
 
     - name: Salvar e Commitar alterações no repositório
       run: |
