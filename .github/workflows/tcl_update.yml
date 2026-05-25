@@ -1,0 +1,46 @@
+name: Atualizar Playlist e EPG TCL TV Plus
+
+on:
+  schedule:
+    # Executa automaticamente todos os dias às 00:00 UTC (21:00 BRT)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # Permite que você clique em um botão no GitHub para rodar manualmente a qualquer momento
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Dá permissão para o bot salvar os arquivos m3u8 e xml no seu repositório
+
+    steps:
+    - name: Baixar código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurar o Python ambiente
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Versão estável ideal para servidores Linux
+
+    - name: Instalar dependências de rede
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests urllib3
+
+    - name: Executar o Raspador TCL
+      run: python tcl_scraper.py
+
+    - name: Salvar e Commitar alterações no repositório
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.name "github-actions[bot]@users.noreply.github.com"
+        
+        # Verifica se houve mudanças para evitar commits vazios que geram erro
+        git add tcl.m3u8 tcl_epg.xml
+        if git diff --staged --quiet; then
+          echo "Nenhuma mudança encontrada nos arquivos gerados."
+        else
+          git commit -m "Atualização automática: Lista e EPG atualizados ✅"
+          git push
+        fi
