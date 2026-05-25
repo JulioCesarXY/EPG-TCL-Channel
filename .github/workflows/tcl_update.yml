@@ -31,6 +31,13 @@ jobs:
     - name: Executar o Raspador TCL
       run: python tcl_scraper.py
 
+    - name: Injetar Hora no Badge
+      run: |
+        # Captura a hora atual no fuso horário de Brasília (-3)
+        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d/%m/%Y--%H:%M")
+        # Substitui o link do badge no README pelo link contendo a hora real
+        sed -i -E "s|badge/Atualizado-[^?]+|badge/Atualizado-$BRAZIL_TIME|g" README.md
+        
     - name: Salvar e Commitar alterações no repositório
       run: |
         git config --global user.name "github-actions[bot]"
