@@ -33,11 +33,14 @@ jobs:
 
     - name: Injetar Data e Hora no Badge do README
       run: |
-        # Captura o horário de Brasília formatado (Ex: 24-05-2026_21-50)
-        # Substituímos as barras por hifens para não quebrar o comando sed e a URL do badge
-        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d-%m-%Y_%H:%M")
+        # Força o README a voltar para o estado original do commit anterior se houver sujeira
+        git checkout README.md
         
-        # Substitui o marcador estático pela hora real da execução
+        # Coleta data e hora sem caracteres proibidos (Substitui ':' por 'h' e espaço por '%20')
+        # Exemplo de resultado: 24-05-2026%20as%2023h52
+        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d-%m-%Y%20as%20%Hh%M")
+        
+        # Realiza a substituição limpa da palavra-chave
         sed -i "s/HORARIO_COMPILACAO/$BRAZIL_TIME/g" README.md
 
     - name: Salvar e Commitar alterações no repositório
@@ -45,11 +48,13 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
+        # Adiciona os arquivos modificados
         git add tcl.m3u8 tcl_epg.xml README.md
+        
+        # Commita apenas se houver mudanças reais nos dados ou no horário
         if git diff --staged --quiet; then
-          echo "Nenhuma alteração detetada."
+          echo "Nenhuma alteração detectada."
         else
-          git commit -m "Atualização automática: Lista e EPG Atualizado ✅"
+          git commit -m "Atualização automática: Dados e Timestamp atualizados"
           git push
         fi
-        
