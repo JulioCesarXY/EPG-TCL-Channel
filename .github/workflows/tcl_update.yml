@@ -31,30 +31,52 @@ jobs:
     - name: Executar o Raspador TCL
       run: python tcl_scraper.py
 
+    
     - name: Injetar Data e Hora no Badge do README
       run: |
-        # Força o README a voltar para o estado original do commit anterior se houver sujeira
-        git checkout README.md
+        python -c "
+        import re
+        from datetime import datetime
+        import zoneinfo
+
+        # Define o fuso horário de Brasília
+        tz = zoneinfo.ZoneInfo('America/Sao_Paulo')
+        now = datetime.now(tz)
         
-        # Coleta data e hora sem caracteres proibidos (Substitui ':' por 'h' e espaço por '%20')
-        # Exemplo de resultado: 24-05-2026%20as%2023h52
-        BRAZIL_TIME=$(TZ="America/Sao_Paulo" date +"%d-%m-%Y%20as%20%Hh%M")
+        # Formata a data de um jeito aceito pelo Shields.io (Ex: 25--05--2026_09h21)
+        # O Shields usa hifens duplos '--' para escapar hifens comuns na mensagem
+        timestamp = now.strftime('%d--%m--%Y_%Hh%M')
+
+        # Lê o README original
+        with open('README.md', 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # Substitui qualquer variação antiga do badge ou o marcador pelo novo link estável
+        # Usamos uma expressão regular para capturar a tag <img> do badge de atualização
+        pattern = r'<img src=\"https://img\.shields\.io/badge/Atualizado-[^\"]+\" alt=\"Last Update\">'
+        new_badge = f'<img src=\"https://img.shields.io/badge/Atualizado-{timestamp}-blue?style=for-the-badge\&label=Ultima%20Atualizacao\" alt=\"Last Update\">'
         
-        # Realiza a substituição limpa da palavra-chave
-        sed -i "s/HORARIO_COMPILACAO/$BRAZIL_TIME/g" README.md
+        # Se não achar o padrão (primeira execução), tenta substituir o marcador direto
+        if 'HORARIO_COMPILACAO' in content:
+            content = content.replace('HORARIO_COMPILACAO', timestamp)
+        else:
+            content = re.sub(pattern, new_badge, content)
+
+        # Salva o arquivo atualizado
+        with open('README.md', 'w', encoding='utf-8') as f:
+            f.write(content)
+        "
 
     - name: Salvar e Commitar alterações no repositório
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
-        # Adiciona os arquivos modificados
         git add tcl.m3u8 tcl_epg.xml README.md
         
-        # Commita apenas se houver mudanças reais nos dados ou no horário
         if git diff --staged --quiet; then
-          echo "Nenhuma alteração detectada."
+          echo "Nenhuma alteração detectada nos dados."
         else
-          git commit -m "Atualização automática: Dados e Timestamp atualizados"
+          git commit -m "Atualização automática: Dados e EPG gerados"
           git push
         fi
