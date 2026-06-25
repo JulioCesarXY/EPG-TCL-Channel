@@ -1,7 +1,7 @@
 # 📺 EPG-TCL-Channel
 
 <p align="center">
-    <img src="https://img.shields.io/badge/Atualizado-24--06--2026_00h58-blue?style=for-the-badge\&label=Ultima%20Atualizacao" alt="Last Update">
+    <img src="https://img.shields.io/badge/Atualizado-25--06--2026_00h59-blue?style=for-the-badge\&label=Ultima%20Atualizacao" alt="Last Update">
   <img src="https://img.shields.io/github/actions/workflow/status/JulioCesarXY/EPG-TCL-Channel/tcl_update.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=white&label=Automacao" alt="GitHub Actions Status">
   <img src="https://img.shields.io/github/license/JulioCesarXY/EPG-TCL-Channel?style=for-the-badge&color=lightgrey&label=Licenca" alt="License">
 </p>
